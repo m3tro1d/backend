@@ -1,0 +1,4 @@
+[submodule "dotnet-base"]
+	path = dotnet-base
+	url = https://github.com/i-andrey/dotnet-base
+    ignore = dirty
