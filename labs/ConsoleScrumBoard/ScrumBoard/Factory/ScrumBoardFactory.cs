@@ -14,9 +14,9 @@ namespace ScrumBoard.Factory
             return new Column(title);
         }
 
-        public ITask CreateTask()
+        public ITask CreateTask(string title, string description, TaskPriority priority)
         {
-            throw new NotImplementedException();
+            return new Model.Task(title, description, priority);
         }
     }
 }
