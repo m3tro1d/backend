@@ -17,14 +17,16 @@ namespace ConsoleScrumBoard
             board.AddColumn(todoColumn);
             board.AddColumn(inProgressColumn);
             board.AddColumn(doneColumn);
-
             Console.WriteLine("= Initial boards =\n");
             PrintColumns(board);
 
             ITask washTheFloorTask = scrumBoardFactory.CreateTask("Wash the floor", "Floor is kinda dusty, better wash it.", TaskPriority.MEDIUM);
             todoColumn.AddTask(washTheFloorTask);
-
             Console.WriteLine("\n= One task added =\n");
+            PrintColumns(board);
+
+            board.AdvanceTask("Wash the floor");
+            Console.WriteLine("\n= Task advanced =\n");
             PrintColumns(board);
         }
 

@@ -9,5 +9,7 @@
         public IReadOnlyCollection<ITask> FindAllTasks();
 
         public ITask? FindTaskByTitle(string title);
+
+        public void RemoveTaskByTitle(string title);
     }
 }

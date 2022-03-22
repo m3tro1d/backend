@@ -37,6 +37,33 @@ namespace ScrumBoard.Model
             return _columns.Find(column => column.Title == title);
         }
 
+        public void AdvanceTask(string taskTitle)
+        {
+            ITask? task = null;
+            int nextColumnIndex = 0;
+
+            for (int i = 0; i < _columns.Count; ++i)
+            {
+                task = _columns[i].FindTaskByTitle(taskTitle);
+                if (task != null)
+                {
+                    if (i == _columns.Count - 1)
+                    {
+                        throw new FinalColumnReachedException();
+                    }
+
+                    _columns[i].RemoveTaskByTitle(taskTitle);
+                    nextColumnIndex = i + 1;
+                    break;
+                }
+            }
+
+            if (nextColumnIndex != 0 && task != null)
+            {
+                _columns[nextColumnIndex].AddTask(task);
+            }
+        }
+
         private const int MAX_COLUMNS = 10;
         private List<IColumn> _columns;
     }

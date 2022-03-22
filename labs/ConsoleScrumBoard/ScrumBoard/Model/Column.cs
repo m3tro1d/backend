@@ -32,6 +32,11 @@ namespace ScrumBoard.Model
             return _tasks.Find(task => task.Title == title);
         }
 
+        public void RemoveTaskByTitle(string title)
+        {
+            _tasks.RemoveAll(task => task.Title == title);
+        }
+
         private List<ITask> _tasks;
     }
 }

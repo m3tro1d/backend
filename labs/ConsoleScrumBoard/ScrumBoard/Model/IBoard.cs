@@ -9,5 +9,7 @@
         public IReadOnlyCollection<IColumn> FindAllColumns();
 
         public IColumn? FindColumnByTitle(string title);
+
+        public void AdvanceTask(string taskTitle);
     }
 }
