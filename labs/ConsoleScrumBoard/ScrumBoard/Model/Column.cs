@@ -22,7 +22,7 @@ namespace ScrumBoard.Model
             _tasks.Add(task);
         }
 
-        public IReadOnlyCollection<ITask> FinaAllTasks()
+        public IReadOnlyCollection<ITask> FindAllTasks()
         {
             return _tasks;
         }

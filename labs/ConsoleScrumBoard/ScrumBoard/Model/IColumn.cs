@@ -6,7 +6,7 @@
 
         public void AddTask(ITask task);
 
-        public IReadOnlyCollection<ITask> FinaAllTasks();
+        public IReadOnlyCollection<ITask> FindAllTasks();
 
         public ITask? FindTaskByTitle(string title);
     }
