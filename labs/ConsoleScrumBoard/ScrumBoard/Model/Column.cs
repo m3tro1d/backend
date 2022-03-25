@@ -16,7 +16,7 @@ namespace ScrumBoard.Model
         {
             if (FindTaskByTitle(task.Title) != null)
             {
-                throw new ColumnTaskAlreadyExistsException();
+                throw new TaskAlreadyExistsException();
             }
 
             _tasks.Add(task);

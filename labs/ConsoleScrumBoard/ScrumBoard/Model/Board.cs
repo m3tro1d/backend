@@ -64,6 +64,86 @@ namespace ScrumBoard.Model
             }
         }
 
+        public void AddTaskToColumn(ITask task, string? columnTitle = null)
+        {
+            if (columnTitle == null)
+            {
+                if (_columns.Count == 0)
+                {
+                    throw new NoColumnsException();
+                }
+
+                _columns[0].AddTask(task);
+                return;
+            }
+
+            IColumn? column = FindColumnByTitle(columnTitle);
+            if (column == null)
+            {
+                throw new ColumnNotFoundException();
+            }
+
+            column.AddTask(task);
+        }
+
+        public void RemoveTask(string taskTitle)
+        {
+            foreach (IColumn column in _columns)
+            {
+                column.RemoveTaskByTitle(taskTitle);
+            }
+        }
+
+        public void ChangeColumnTitle(string columnTitle, string newTitle)
+        {
+            IColumn? column = FindColumnByTitle(columnTitle);
+            if (column == null)
+            {
+                throw new ColumnNotFoundException();
+            }
+
+            column.Title = newTitle;
+        }
+
+        public void ChangeTaskTitle(string taskTitle, string newTitle)
+        {
+            foreach (IColumn column in _columns)
+            {
+                ITask? task = column.FindTaskByTitle(taskTitle);
+                if (task != null)
+                {
+                    task.Title = newTitle;
+                    break;
+                }
+            }
+        }
+
+        public void ChangeTaskDescription(string taskTitle, string newDescription)
+        {
+            foreach (IColumn column in _columns)
+            {
+                ITask? task = column.FindTaskByTitle(taskTitle);
+                if (task != null)
+                {
+                    task.Description = newDescription;
+                    break;
+                }
+            }
+        }
+
+        public void ChangeTaskPriority(string taskTitle, TaskPriority newPriority)
+        {
+            foreach (IColumn column in _columns)
+            {
+                ITask? task = column.FindTaskByTitle(taskTitle);
+                if (task != null)
+                {
+                    task.Priority = newPriority;
+                    break;
+                }
+            }
+        }
+
         private const int MAX_COLUMNS = 10;
         private List<IColumn> _columns;
     }
