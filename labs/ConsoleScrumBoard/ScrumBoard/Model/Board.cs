@@ -66,13 +66,13 @@ namespace ScrumBoard.Model
 
         public void AddTaskToColumn(ITask task, string? columnTitle = null)
         {
+            if (_columns.Count == 0)
+            {
+                throw new NoColumnsException();
+            }
+
             if (columnTitle == null)
             {
-                if (_columns.Count == 0)
-                {
-                    throw new NoColumnsException();
-                }
-
                 _columns[0].AddTask(task);
                 return;
             }
@@ -113,9 +113,11 @@ namespace ScrumBoard.Model
                 if (task != null)
                 {
                     task.Title = newTitle;
-                    break;
+                    return;
                 }
             }
+
+            throw new TaskNotFoundException();
         }
 
         public void ChangeTaskDescription(string taskTitle, string newDescription)
@@ -126,9 +128,11 @@ namespace ScrumBoard.Model
                 if (task != null)
                 {
                     task.Description = newDescription;
-                    break;
+                    return;
                 }
             }
+
+            throw new TaskNotFoundException();
         }
 
         public void ChangeTaskPriority(string taskTitle, TaskPriority newPriority)
@@ -139,9 +143,11 @@ namespace ScrumBoard.Model
                 if (task != null)
                 {
                     task.Priority = newPriority;
-                    break;
+                    return;
                 }
             }
+
+            throw new TaskNotFoundException();
         }
 
         private const int MAX_COLUMNS = 10;
