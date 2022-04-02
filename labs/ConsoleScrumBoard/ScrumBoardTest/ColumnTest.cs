@@ -48,8 +48,7 @@ namespace ScrumBoardTest
 
             for (int i = 0; i < amount; ++i)
             {
-                ITask task = ScrumBoardFactory.CreateTask(i.ToString(), _mockDescription, _mockPriority);
-                column.AddTask(task);
+                column.AddTask(ScrumBoardFactory.CreateTask(i.ToString(), _mockDescription, _mockPriority));
             }
 
             Assert.Collection(column.FindAllTasks(),

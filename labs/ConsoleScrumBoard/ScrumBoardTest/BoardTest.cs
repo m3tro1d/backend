@@ -36,8 +36,7 @@ namespace ScrumBoardTest
 
             for (int i = 0; i < amount; ++i)
             {
-                IColumn column = ScrumBoardFactory.CreateColumn(i.ToString());
-                board.AddColumn(column);
+                board.AddColumn(ScrumBoardFactory.CreateColumn(i.ToString()));
             }
 
             Assert.Collection(board.FindAllColumns(),
@@ -64,8 +63,7 @@ namespace ScrumBoardTest
             IBoard board = MockBoard();
             for (int i = 0; i < 10; ++i)
             {
-                IColumn column = ScrumBoardFactory.CreateColumn(i.ToString());
-                board.AddColumn(column);
+                board.AddColumn(ScrumBoardFactory.CreateColumn(i.ToString()));
             }
 
             Assert.Throws<BoardColumnCountExceededException>(() => board.AddColumn(MockColumn()));
@@ -90,14 +88,121 @@ namespace ScrumBoardTest
             Assert.Null(board.FindColumnByTitle("whatever"));
         }
 
-        // TODO:
-        //   advance task
-        //   add task to column
-        //   remove task
-        //   Change column title
-        //   Change task title
-        //   Change task description
-        //   Change task priority
+        // TODO: advance task
+
+        [Fact]
+        public void AddTaskToBoardWithColumns_ItAppearsInTheFirstColumn()
+        {
+            IBoard board = MockBoard();
+            IColumn column = MockColumn();
+            ITask task = MockTask();
+            board.AddColumn(column);
+
+            board.AddTaskToColumn(task);
+
+            Assert.Collection(column.FindAllTasks(),
+                    columnTask => Assert.Equal(task, columnTask)
+                );
+        }
+
+        [Fact]
+        public void AddTaskToBoardWithoutColumns_ThrowsException()
+        {
+            IBoard board = MockBoard();
+            ITask task = MockTask();
+
+            Assert.Throws<NoColumnsException>(() => board.AddTaskToColumn(task));
+        }
+
+        [Fact]
+        public void AddTaskToExistingColumn_ItAppearsInTheColumn()
+        {
+            IBoard board = MockBoard();
+            for (int i = 0; i < 5; ++i)
+            {
+                board.AddColumn(ScrumBoardFactory.CreateColumn(i.ToString()));
+            }
+            IColumn column = MockColumn();
+            board.AddColumn(column);
+            ITask task = MockTask();
+
+            board.AddTaskToColumn(task, column.Title);
+
+            Assert.Collection(column.FindAllTasks(),
+                    columnTask => Assert.Equal(task, columnTask)
+                );
+        }
+
+        [Fact]
+        public void AddTaskToNonExistingColumn_ThrowsException()
+        {
+            IBoard board = MockBoard();
+            for (int i = 0; i < 5; ++i)
+            {
+                board.AddColumn(ScrumBoardFactory.CreateColumn(i.ToString()));
+            }
+            ITask task = MockTask();
+
+            Assert.Throws<ColumnNotFoundException>(() => board.AddTaskToColumn(task, "whatever"));
+        }
+
+        [Fact]
+        public void RemoveExistingTask_RemovesTaskFromTheColumn()
+        {
+            IBoard board = MockBoard();
+            IColumn column = MockColumn();
+            board.AddColumn(column);
+            ITask task = MockTask();
+            column.AddTask(task);
+
+            board.RemoveTask(task.Title);
+
+            Assert.Empty(column.FindAllTasks());
+        }
+
+        [Fact]
+        public void RemoveNonExistingTask_ColumnRemainsUnchanged()
+        {
+            IBoard board = MockBoard();
+            IColumn column = MockColumn();
+            ITask task = MockTask();
+            column.AddTask(task);
+
+            board.RemoveTask("whatever");
+
+            Assert.Collection(column.FindAllTasks(),
+                    columnTask => Assert.Equal(task, columnTask)
+                );
+        }
+
+        [Fact]
+        public void ChangeExistingColumnTitle_TitleChanges()
+        {
+            IBoard board = MockBoard();
+            IColumn column = MockColumn();
+            board.AddColumn(column);
+            string newTitle = "Updated";
+
+            board.ChangeColumnTitle(column.Title, newTitle);
+
+            Assert.Collection(board.FindAllColumns(),
+                    column => Assert.Equal(newTitle, column.Title)
+                );
+        }
+
+        [Fact]
+        public void ChangeNonExistingColumnTitle_ThrowsException()
+        {
+            IBoard board = MockBoard();
+
+            Assert.Throws<ColumnNotFoundException>(() => board.ChangeColumnTitle("whatever", "Updated"));
+        }
+
+        // TODO: Change task title
+
+        // TODO: Change task description
+
+        // TODO: Change task priority
 
         private IBoard MockBoard()
         {
