@@ -88,7 +88,55 @@ namespace ScrumBoardTest
             Assert.Null(board.FindColumnByTitle("whatever"));
         }
 
-        // TODO: advance task
+        [Fact]
+        public void AdvanceExistingTask_ItMovesToTheNextColumn()
+        {
+            IBoard board = MockBoard();
+            IColumn column1 = ScrumBoardFactory.CreateColumn("1");
+            IColumn column2 = ScrumBoardFactory.CreateColumn("2");
+            board.AddColumn(column1);
+            board.AddColumn(column2);
+            ITask task = MockTask();
+            board.AddTaskToColumn(task);
+
+            board.AdvanceTask(task.Title);
+
+            Assert.Empty(column1.FindAllTasks());
+            Assert.Collection(column2.FindAllTasks(),
+                    columnTask => Assert.Equal(task, columnTask)
+                );
+        }
+
+        [Fact]
+        public void AdvanceNonExistingTask_ThrowsException()
+        {
+            IBoard board = MockBoard();
+            for (int i = 0; i < 5; ++i)
+            {
+                board.AddColumn(ScrumBoardFactory.CreateColumn(i.ToString()));
+            }
+
+            Assert.Throws<TaskNotFoundException>(() => board.AdvanceTask("whatever"));
+        }
+
+        [Fact]
+        public void AdvanceTaskPastLastColumn_ThrowsException()
+        {
+            IBoard board = MockBoard();
+            board.AddColumn(MockColumn());
+            ITask task = MockTask();
+            board.AddTaskToColumn(task);
+
+            Assert.Throws<FinalColumnReachedException>(() => board.AdvanceTask(task.Title));
+        }
+
+        [Fact]
+        public void AdvanceTaskWithNoColumns_ThrowsException()
+        {
+            IBoard board = MockBoard();
+
+            Assert.Throws<NoColumnsException>(() => board.AdvanceTask("whatever"));
+        }
 
         [Fact]
         public void AddTaskToBoardWithColumns_ItAppearsInTheFirstColumn()

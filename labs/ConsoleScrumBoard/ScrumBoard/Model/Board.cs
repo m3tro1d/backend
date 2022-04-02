@@ -39,6 +39,11 @@ namespace ScrumBoard.Model
 
         public void AdvanceTask(string taskTitle)
         {
+            if (_columns.Count == 0)
+            {
+                throw new NoColumnsException();
+            }
+
             ITask? task = null;
             int nextColumnIndex = 0;
 
@@ -61,7 +66,11 @@ namespace ScrumBoard.Model
             if (nextColumnIndex != 0 && task != null)
             {
                 _columns[nextColumnIndex].AddTask(task);
+                return;
             }
+
+            throw new TaskNotFoundException();
+
         }
 
         public void AddTaskToColumn(ITask task, string? columnTitle = null)
