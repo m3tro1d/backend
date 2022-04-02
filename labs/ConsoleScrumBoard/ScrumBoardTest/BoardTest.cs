@@ -246,11 +246,86 @@ namespace ScrumBoardTest
             Assert.Throws<ColumnNotFoundException>(() => board.ChangeColumnTitle("whatever", "Updated"));
         }
 
-        // TODO: Change task title
+        [Fact]
+        public void ChangeExistingTaskTitle_TitleChanges()
+        {
+            IBoard board = MockBoard();
+            IColumn column = MockColumn();
+            board.AddColumn(column);
+            ITask task = MockTask();
+            column.AddTask(task);
+            string newTitle = "Updated";
 
-        // TODO: Change task description
+            board.ChangeTaskTitle(task.Title, newTitle);
 
-        // TODO: Change task priority
+            Assert.Equal(newTitle, task.Title);
+        }
+
+        [Fact]
+        public void ChangeNonExistingTaskTitle_ThrowsException()
+        {
+            IBoard board = MockBoard();
+            IColumn column = MockColumn();
+            board.AddColumn(column);
+            ITask task = MockTask();
+            column.AddTask(task);
+
+            Assert.Throws<TaskNotFoundException>(() => board.ChangeTaskTitle("whatever", "Updated"));
+        }
+
+        [Fact]
+        public void ChangeExistingTaskDescription_DescriptionChanges()
+        {
+            IBoard board = MockBoard();
+            IColumn column = MockColumn();
+            board.AddColumn(column);
+            ITask task = MockTask();
+            column.AddTask(task);
+            string newDescription = "Updated";
+
+            board.ChangeTaskDescription(task.Title, newDescription);
+
+            Assert.Equal(newDescription, task.Description);
+        }
+
+        [Fact]
+        public void ChangeNonExistingTaskDescription_ThrowsException()
+        {
+            IBoard board = MockBoard();
+            IColumn column = MockColumn();
+            board.AddColumn(column);
+            ITask task = MockTask();
+            column.AddTask(task);
+
+            Assert.Throws<TaskNotFoundException>(() => board.ChangeTaskDescription("whatever", "Updated"));
+        }
+
+        [Fact]
+        public void ChangeExistingTaskPriority_PriorityChanges()
+        {
+            IBoard board = MockBoard();
+            IColumn column = MockColumn();
+            board.AddColumn(column);
+            ITask task = MockTask();
+            column.AddTask(task);
+            TaskPriority newPriority = TaskPriority.NONE;
+
+            board.ChangeTaskPriority(task.Title, newPriority);
+
+            Assert.Equal(newPriority, task.Priority);
+        }
+
+        [Fact]
+        public void ChangeNonExistingTaskPriority_ThrowsException()
+        {
+            IBoard board = MockBoard();
+            IColumn column = MockColumn();
+            board.AddColumn(column);
+            ITask task = MockTask();
+            column.AddTask(task);
+
+            Assert.Throws<TaskNotFoundException>(() => board.ChangeTaskPriority("whatever", TaskPriority.NONE));
+        }
 
         private IBoard MockBoard()
         {
