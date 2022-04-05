@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleScrumBoard", "Consol
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScrumBoard", "ScrumBoard\ScrumBoard.csproj", "{722D54B6-9897-434F-8512-6E2F5EFD1946}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScrumBoardTest", "ScrumBoardTest\ScrumBoardTest.csproj", "{7CBDE964-56FE-4CFF-A986-02A31F80B7A6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScrumBoardTest", "ScrumBoardTest\ScrumBoardTest.csproj", "{7CBDE964-56FE-4CFF-A986-02A31F80B7A6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
