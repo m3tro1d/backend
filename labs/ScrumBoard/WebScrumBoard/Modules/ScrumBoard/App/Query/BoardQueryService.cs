@@ -24,6 +24,11 @@ public class BoardQueryService : IBoardQueryService
             boards = new();
         }
 
+        return HydrateBoards(boards);
+    }
+
+    private IEnumerable<BoardData> HydrateBoards(IEnumerable<IBoard> boards)
+    {
         List<BoardData> result = new();
         foreach (IBoard board in boards)
         {
@@ -33,13 +38,13 @@ public class BoardQueryService : IBoardQueryService
                 List<TaskData> tasks = new();
                 foreach (ITask task in tasks)
                 {
-                    tasks.Add(new TaskData(task.Title, task.Description, PriorityToString(task.Priority)));
+                    tasks.Add(new TaskData(task.Id.ToString(), task.Title, task.Description, PriorityToString(task.Priority)));
                 }
 
-                columns.Add(new ColumnData(column.Title, tasks));
+                columns.Add(new ColumnData(column.Id.ToString(), column.Title, tasks));
             }
 
-            result.Add(new BoardData(board.Title, columns));
+            result.Add(new BoardData(board.Id.ToString(), board.Title, columns));
         }
 
         return result;

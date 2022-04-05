@@ -2,11 +2,13 @@
 
 public class BoardData
 {
+    public string Id { get; }
     public string Title { get; }
     public IEnumerable<ColumnData> Columns { get; }
 
-    public BoardData(string title, IEnumerable<ColumnData> columns)
+    public BoardData(string id, string title, IEnumerable<ColumnData> columns)
     {
+        Id = id;
         Title = title;
         Columns = columns;
     }
