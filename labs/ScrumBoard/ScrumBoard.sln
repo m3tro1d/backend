@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScrumBoard", "ScrumBoard\Sc
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScrumBoardTest", "ScrumBoardTest\ScrumBoardTest.csproj", "{7CBDE964-56FE-4CFF-A986-02A31F80B7A6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebScrumBoard", "WebScrumBoard\WebScrumBoard.csproj", "{87B3628B-16BC-48B5-9A9E-1657E7A5B1DB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{7CBDE964-56FE-4CFF-A986-02A31F80B7A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7CBDE964-56FE-4CFF-A986-02A31F80B7A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7CBDE964-56FE-4CFF-A986-02A31F80B7A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87B3628B-16BC-48B5-9A9E-1657E7A5B1DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87B3628B-16BC-48B5-9A9E-1657E7A5B1DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87B3628B-16BC-48B5-9A9E-1657E7A5B1DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87B3628B-16BC-48B5-9A9E-1657E7A5B1DB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
