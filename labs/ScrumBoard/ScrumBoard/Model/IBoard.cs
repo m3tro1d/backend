@@ -2,17 +2,18 @@
 
 public interface IBoard
 {
+    public Guid Id { get; }
     public string Title { get; }
 
     public void AddColumn(IColumn column);
-    public void ChangeColumnTitle(string columnTitle, string newTitle);
+    public void ChangeColumnTitle(Guid columnId, string newTitle);
     public IReadOnlyCollection<IColumn> FindAllColumns();
-    public IColumn? FindColumnByTitle(string title);
+    public IColumn? FindColumnById(Guid columnId);
 
-    public void AddTaskToColumn(ITask task, string? columnTitle = null);
-    public void ChangeTaskTitle(string taskTitle, string newTitle);
-    public void ChangeTaskDescription(string taskTitle, string newDescription);
-    public void ChangeTaskPriority(string taskTitle, TaskPriority newPriority);
-    public void AdvanceTask(string taskTitle);
-    public void RemoveTask(string taskTitle);
+    public void AddTaskToColumn(ITask task, Guid? columnId = null);
+    public void ChangeTaskTitle(Guid taskId, string newTitle);
+    public void ChangeTaskDescription(Guid taskId, string newDescription);
+    public void ChangeTaskPriority(Guid taskId, TaskPriority newPriority);
+    public void AdvanceTask(Guid taskId);
+    public void RemoveTask(Guid taskId);
 }

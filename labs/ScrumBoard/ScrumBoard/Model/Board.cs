@@ -4,10 +4,12 @@ namespace ScrumBoard.Model;
 
 internal class Board : IBoard
 {
+    public Guid Id { get; }
     public string Title { get; }
 
-    public Board(string title)
+    public Board(Guid id, string title)
     {
+        Id = id;
         Title = title;
         _columns = new();
     }
@@ -19,7 +21,7 @@ internal class Board : IBoard
             throw new BoardColumnCountExceededException();
         }
 
-        if (FindColumnByTitle(column.Title) != null)
+        if (FindColumnById(column.Id) != null)
         {
             throw new ColumnAlreadyExistsException();
         }
@@ -32,12 +34,12 @@ internal class Board : IBoard
         return _columns;
     }
 
-    public IColumn? FindColumnByTitle(string title)
+    public IColumn? FindColumnById(Guid columnId)
     {
-        return _columns.Find(column => column.Title == title);
+        return _columns.Find(column => column.Id == columnId);
     }
 
-    public void AdvanceTask(string taskTitle)
+    public void AdvanceTask(Guid taskId)
     {
         if (_columns.Count == 0)
         {
@@ -49,7 +51,7 @@ internal class Board : IBoard
 
         for (int i = 0; i < _columns.Count; ++i)
         {
-            task = _columns[i].FindTaskByTitle(taskTitle);
+            task = _columns[i].FindTaskById(taskId);
             if (task != null)
             {
                 if (i == _columns.Count - 1)
@@ -57,7 +59,7 @@ internal class Board : IBoard
                     throw new FinalColumnReachedException();
                 }
 
-                _columns[i].RemoveTaskByTitle(taskTitle);
+                _columns[i].RemoveTaskById(taskId);
                 nextColumnIndex = i + 1;
                 break;
             }
@@ -73,20 +75,20 @@ internal class Board : IBoard
 
     }
 
-    public void AddTaskToColumn(ITask task, string? columnTitle = null)
+    public void AddTaskToColumn(ITask task, Guid? columnId = null)
     {
         if (_columns.Count == 0)
         {
             throw new NoColumnsException();
         }
 
-        if (columnTitle == null)
+        if (columnId == null)
         {
             _columns[0].AddTask(task);
             return;
         }
 
-        IColumn? column = FindColumnByTitle(columnTitle);
+        IColumn? column = FindColumnById(columnId.Value);
         if (column == null)
         {
             throw new ColumnNotFoundException();
@@ -95,17 +97,17 @@ internal class Board : IBoard
         column.AddTask(task);
     }
 
-    public void RemoveTask(string taskTitle)
+    public void RemoveTask(Guid taskId)
     {
         foreach (IColumn column in _columns)
         {
-            column.RemoveTaskByTitle(taskTitle);
+            column.RemoveTaskById(taskId);
         }
     }
 
-    public void ChangeColumnTitle(string columnTitle, string newTitle)
+    public void ChangeColumnTitle(Guid columnId, string newTitle)
     {
-        IColumn? column = FindColumnByTitle(columnTitle);
+        IColumn? column = FindColumnById(columnId);
         if (column == null)
         {
             throw new ColumnNotFoundException();
@@ -114,11 +116,11 @@ internal class Board : IBoard
         column.Title = newTitle;
     }
 
-    public void ChangeTaskTitle(string taskTitle, string newTitle)
+    public void ChangeTaskTitle(Guid taskId, string newTitle)
     {
         foreach (IColumn column in _columns)
         {
-            ITask? task = column.FindTaskByTitle(taskTitle);
+            ITask? task = column.FindTaskById(taskId);
             if (task != null)
             {
                 task.Title = newTitle;
@@ -129,11 +131,11 @@ internal class Board : IBoard
         throw new TaskNotFoundException();
     }
 
-    public void ChangeTaskDescription(string taskTitle, string newDescription)
+    public void ChangeTaskDescription(Guid taskId, string newDescription)
     {
         foreach (IColumn column in _columns)
         {
-            ITask? task = column.FindTaskByTitle(taskTitle);
+            ITask? task = column.FindTaskById(taskId);
             if (task != null)
             {
                 task.Description = newDescription;
@@ -144,11 +146,11 @@ internal class Board : IBoard
         throw new TaskNotFoundException();
     }
 
-    public void ChangeTaskPriority(string taskTitle, TaskPriority newPriority)
+    public void ChangeTaskPriority(Guid taskId, TaskPriority newPriority)
     {
         foreach (IColumn column in _columns)
         {
-            ITask? task = column.FindTaskByTitle(taskTitle);
+            ITask? task = column.FindTaskById(taskId);
             if (task != null)
             {
                 task.Priority = newPriority;

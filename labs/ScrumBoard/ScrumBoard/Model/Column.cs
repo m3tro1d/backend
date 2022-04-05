@@ -4,17 +4,19 @@ namespace ScrumBoard.Model;
 
 internal class Column : IColumn
 {
+    public Guid Id { get; }
     public string Title { get; set; }
 
-    public Column(string title)
+    public Column(Guid id, string title)
     {
+        Id = id;
         Title = title;
         _tasks = new();
     }
 
     public void AddTask(ITask task)
     {
-        if (FindTaskByTitle(task.Title) != null)
+        if (FindTaskById(task.Id) != null)
         {
             throw new TaskAlreadyExistsException();
         }
@@ -27,14 +29,14 @@ internal class Column : IColumn
         return _tasks;
     }
 
-    public ITask? FindTaskByTitle(string title)
+    public ITask? FindTaskById(Guid taskId)
     {
-        return _tasks.Find(task => task.Title == title);
+        return _tasks.Find(task => task.Id == taskId);
     }
 
-    public void RemoveTaskByTitle(string title)
+    public void RemoveTaskById(Guid taskId)
     {
-        _tasks.RemoveAll(task => task.Title == title);
+        _tasks.RemoveAll(task => task.Id == taskId);
     }
 
     private List<ITask> _tasks;
