@@ -2,6 +2,7 @@
 using WebScrumBoard.Controllers.Request;
 using WebScrumBoard.Controllers.Response;
 using WebScrumBoard.Modules.ScrumBoard.App;
+using WebScrumBoard.Modules.ScrumBoard.App.Exception;
 using WebScrumBoard.Modules.ScrumBoard.App.Query;
 using WebScrumBoard.Modules.ScrumBoard.App.Query.Data;
 
@@ -20,8 +21,8 @@ public class ScrumBoardController : ControllerBase
         _boardQueryService = boardQueryService;
     }
 
-    // GET api/v1/scrumboard
-    [HttpGet]
+    // GET api/v1/scrumboard/board
+    [HttpGet("board")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public ListBoardsResponse ListBoards()
     {
@@ -29,8 +30,8 @@ public class ScrumBoardController : ControllerBase
         return new ListBoardsResponse(boards);
     }
 
-    // POST: api/v1/scrumboard
-    [HttpPost]
+    // POST: api/v1/scrumboard/board
+    [HttpPost("board")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     public IActionResult CreateBoard([FromBody] CreateBoardRequest request)
     {
@@ -39,8 +40,8 @@ public class ScrumBoardController : ControllerBase
         return Created(id.ToString(), null);
     }
 
-    // DELETE api/v1/scrumboard/74e353de-2938-4125-9d3c-80acff784644
-    [HttpDelete("{boardId}")]
+    // DELETE api/v1/scrumboard/board/74e353de-2938-4125-9d3c-80acff784644
+    [HttpDelete("board/{boardId}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public IActionResult RemoveBoard(string boardId)
@@ -56,28 +57,42 @@ public class ScrumBoardController : ControllerBase
         return NoContent();
     }
 
-    // POST: api/v1/scrumboard/74e353de-2938-4125-9d3c-80acff784644
-    [HttpPost("{boardId}")]
+    // POST: api/v1/scrumboard/column
+    [HttpPost("column")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public IActionResult CreateColumn([FromBody] CreateColumnRequest request)
+    {
+        Guid id;
+        if (!Guid.TryParse(request.BoardId, out id))
+        {
+            return BadRequest("invalid guid");
+        }
+
+        try
+        {
+            Guid columnId = _boardService.CreateColumn(id, request.Title);
+            return Created(columnId.ToString(), null);
+        }
+        catch (BoardNotFoundException)
+        {
+            return NotFound("board not found");
+        }
+    }
+
+    // PATCH: api/v1/scrumboard/column/74e353de-2938-4125-9d3c-80acff784644
+    [HttpPatch("column/{columnId}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public IActionResult CreateColumn(string boardId, [FromBody] CreateColumnRequest request)
+    public IActionResult ChangeColumnTitle(string columnId, [FromBody] ChangeColumnTitleRequest request)
     {
         // TODO
         return Ok();
     }
 
-    // PATCH: api/v1/scrumboard/74e353de-2938-4125-9d3c-80acff784644/74e353de-2938-4125-9d3c-80acff784644
-    [HttpPatch("{boardId}/{columnId}")]
+    // DELETE: api/v1/scrumboard/column/74e353de-2938-4125-9d3c-80acff784644
+    [HttpDelete("column/{columnId}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public IActionResult CreateColumn(string boardId, string columnId, [FromBody] ChangeColumnTitleRequest request)
-    {
-        // TODO
-        return Ok();
-    }
-
-    // DELETE: api/v1/scrumboard/74e353de-2938-4125-9d3c-80acff784644/74e353de-2938-4125-9d3c-80acff784644
-    [HttpDelete("{boardId}/{columnId}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public IActionResult RemoveColumn(string boardId, string columnId)
+    public IActionResult RemoveColumn(string columnId)
     {
         // TODO
         return Ok();

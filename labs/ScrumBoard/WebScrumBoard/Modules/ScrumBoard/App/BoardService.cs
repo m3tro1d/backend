@@ -24,4 +24,14 @@ public class BoardService : IBoardService
     {
         _boardStore.Remove(boardId);
     }
+
+    public Guid CreateColumn(Guid boardId, string title)
+    {
+        IBoard board = _boardStore.FindOne(boardId);
+        IColumn column = ScrumBoardFactory.CreateColumn(title);
+        board.AddColumn(column);
+        _boardStore.Store(board);
+
+        return column.Id;
+    }
 }
