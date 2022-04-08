@@ -111,10 +111,43 @@ public class ScrumBoardController : ControllerBase
         }
     }
 
-    // TODO
-    // add task
-    // change task title
-    // change task description
-    // change task priority
-    // advance task
+    [HttpPost("task")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public IActionResult CreateTask([FromBody] CreateTaskRequest request)
+    {
+        // TODO
+        return Ok();
+    }
+
+    [HttpPatch("task/{taskId}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public IActionResult ChangeTask(string taskId, [FromBody] ChangeTaskRequest request)
+    {
+        // TODO
+        return Ok();
+    }
+
+    [HttpPost("task/{taskId}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public IActionResult AdvanceTask(string taskId)
+    {
+        // TODO
+        return Ok();
+    }
+
+    [HttpDelete("task/{taskId}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public IActionResult RemoveTask(string taskId)
+    {
+        // TODO
+        return Ok();
+    }
 }
