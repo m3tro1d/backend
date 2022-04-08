@@ -22,7 +22,8 @@ public class BoardService : IBoardService
 
     public void RemoveBoard(Guid boardId)
     {
-        _boardStore.Remove(boardId);
+        IBoard board = _boardStore.FindOne(boardId);
+        _boardStore.Remove(board.Id);
     }
 
     public Guid CreateColumn(Guid boardId, string title)
@@ -33,5 +34,12 @@ public class BoardService : IBoardService
         _boardStore.Store(board);
 
         return column.Id;
+    }
+
+    public void ChangeColumnTitle(Guid columnId, string title)
+    {
+        IBoard board = _boardStore.FindOneByColumnId(columnId);
+        board.ChangeColumnTitle(columnId, title);
+        _boardStore.Store(board);
     }
 }

@@ -39,6 +39,19 @@ public class BoardStore : IBoardStore
         return board;
     }
 
+    public IBoard FindOneByColumnId(Guid columnId)
+    {
+        List<IBoard> boards = GetBoards();
+
+        IBoard? board = boards.Find(b => b.FindAllColumns().Any(c => c.Id == columnId));
+        if (board == null)
+        {
+            throw new ColumnNotFoundException();
+        }
+
+        return board;
+    }
+
     public void Remove(Guid boardId)
     {
         List<IBoard> boards = GetBoards();
@@ -59,4 +72,5 @@ public class BoardStore : IBoardStore
 
         return boards;
     }
+
 }

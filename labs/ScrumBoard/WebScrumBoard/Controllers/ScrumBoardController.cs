@@ -52,14 +52,21 @@ public class ScrumBoardController : ControllerBase
             return BadRequest("invalid guid");
         }
 
-        _boardService.RemoveBoard(id);
-
-        return NoContent();
+        try
+        {
+            _boardService.RemoveBoard(id);
+            return NoContent();
+        }
+        catch (BoardNotFoundException e)
+        {
+            return NotFound(e.Message);
+        }
     }
 
     // POST: api/v1/scrumboard/column
     [HttpPost("column")]
     [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult CreateColumn([FromBody] CreateColumnRequest request)
     {
@@ -74,28 +81,34 @@ public class ScrumBoardController : ControllerBase
             Guid columnId = _boardService.CreateColumn(id, request.Title);
             return Created(columnId.ToString(), null);
         }
-        catch (BoardNotFoundException)
+        catch (BoardNotFoundException e)
         {
-            return NotFound("board not found");
+            return NotFound(e.Message);
         }
     }
 
     // PATCH: api/v1/scrumboard/column/74e353de-2938-4125-9d3c-80acff784644
     [HttpPatch("column/{columnId}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult ChangeColumnTitle(string columnId, [FromBody] ChangeColumnTitleRequest request)
     {
-        // TODO
-        return Ok();
-    }
+        Guid id;
+        if (!Guid.TryParse(columnId, out id))
+        {
+            return BadRequest("invalid guid");
+        }
 
-    // DELETE: api/v1/scrumboard/column/74e353de-2938-4125-9d3c-80acff784644
-    [HttpDelete("column/{columnId}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public IActionResult RemoveColumn(string columnId)
-    {
-        // TODO
-        return Ok();
+        try
+        {
+            _boardService.ChangeColumnTitle(id, request.Title);
+            return Ok();
+        }
+        catch (ColumnNotFoundException e)
+        {
+            return NotFound(e.Message);
+        }
     }
 
     // TODO
