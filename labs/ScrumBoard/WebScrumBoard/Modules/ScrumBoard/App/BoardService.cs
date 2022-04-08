@@ -42,4 +42,26 @@ public class BoardService : IBoardService
         board.ChangeColumnTitle(columnId, title);
         _boardStore.Store(board);
     }
+
+    public Guid CreateTask(Guid columnId, string title, string description, TaskPriority priority)
+    {
+        IBoard board = _boardStore.FindOneByColumnId(columnId);
+        ITask task = ScrumBoardFactory.CreateTask(title, description, priority);
+        board.AddTaskToColumn(task, columnId);
+        _boardStore.Store(board);
+
+        return task.Id;
+    }
+
+    public void ChangeTask(Guid taskId, string? title, string? description, TaskPriority? priority)
+    {
+    }
+
+    public void AdvanceTask(Guid taskId)
+    {
+    }
+
+    public void RemoveTask(Guid taskId)
+    {
+    }
 }

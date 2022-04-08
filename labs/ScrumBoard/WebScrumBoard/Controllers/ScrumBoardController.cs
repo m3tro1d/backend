@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ScrumBoard.Model;
 using WebScrumBoard.Controllers.Request;
 using WebScrumBoard.Controllers.Response;
 using WebScrumBoard.Modules.ScrumBoard.App;
@@ -111,16 +112,37 @@ public class ScrumBoardController : ControllerBase
         }
     }
 
+    // POST: api/v1/scrumboard/task
     [HttpPost("task")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult CreateTask([FromBody] CreateTaskRequest request)
     {
-        // TODO
-        return Ok();
+        Guid id;
+        if (!Guid.TryParse(request.ColumnId, out id))
+        {
+            return BadRequest("invalid guid");
+        }
+
+        try
+        {
+            // TODO: not working
+            TaskPriority priority = ApiToDomainTaskPriority(request.Priority);
+            Guid taskId = _boardService.CreateTask(id, request.Title, request.Description, priority);
+            return Created(taskId.ToString(), null);
+        }
+        catch (ColumnNotFoundException e)
+        {
+            return NotFound(e.Message);
+        }
+        catch (InvalidPriorityException e)
+        {
+            return BadRequest(e.Message);
+        }
     }
 
+    // PATCH: api/v1/scrumboard/task/74e353de-2938-4125-9d3c-80acff784644
     [HttpPatch("task/{taskId}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -131,6 +153,7 @@ public class ScrumBoardController : ControllerBase
         return Ok();
     }
 
+    // POST: api/v1/scrumboard/task/74e353de-2938-4125-9d3c-80acff784644
     [HttpPost("task/{taskId}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -141,6 +164,7 @@ public class ScrumBoardController : ControllerBase
         return Ok();
     }
 
+    // DELETE: api/v1/scrumboard/task/74e353de-2938-4125-9d3c-80acff784644
     [HttpDelete("task/{taskId}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -149,5 +173,17 @@ public class ScrumBoardController : ControllerBase
     {
         // TODO
         return Ok();
+    }
+
+    private static TaskPriority ApiToDomainTaskPriority(int priority)
+    {
+        return priority switch
+        {
+            0 => TaskPriority.NONE,
+            1 => TaskPriority.LOW,
+            2 => TaskPriority.MEDIUM,
+            3 => TaskPriority.HIGH,
+            _ => throw new InvalidPriorityException(),
+        };
     }
 }
