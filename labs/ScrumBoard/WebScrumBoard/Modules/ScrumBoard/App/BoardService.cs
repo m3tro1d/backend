@@ -55,13 +55,35 @@ public class BoardService : IBoardService
 
     public void ChangeTask(Guid taskId, string? title, string? description, TaskPriority? priority)
     {
+        IBoard board = _boardStore.FindOneByTaskId(taskId);
+
+        if (title is not null)
+        {
+            board.ChangeTaskTitle(taskId, title);
+        }
+        if (description is not null)
+        {
+            board.ChangeTaskDescription(taskId, description);
+        }
+        if (priority is not null)
+        {
+            board.ChangeTaskPriority(taskId, (TaskPriority)priority);
+        }
+
+        _boardStore.Store(board);
     }
 
     public void AdvanceTask(Guid taskId)
     {
+        IBoard board = _boardStore.FindOneByTaskId(taskId);
+        board.AdvanceTask(taskId);
+        _boardStore.Store(board);
     }
 
     public void RemoveTask(Guid taskId)
     {
+        IBoard board = _boardStore.FindOneByTaskId(taskId);
+        board.RemoveTask(taskId);
+        _boardStore.Store(board);
     }
 }

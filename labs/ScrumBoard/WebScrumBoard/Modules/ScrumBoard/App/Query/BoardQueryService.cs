@@ -36,7 +36,7 @@ public class BoardQueryService : IBoardQueryService
             foreach (IColumn column in board.FindAllColumns())
             {
                 List<TaskData> tasks = new();
-                foreach (ITask task in tasks)
+                foreach (ITask task in column.FindAllTasks())
                 {
                     tasks.Add(new TaskData(task.Id.ToString(), task.Title, task.Description, PriorityToString(task.Priority)));
                 }

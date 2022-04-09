@@ -86,6 +86,10 @@ public class ScrumBoardController : ControllerBase
         {
             return NotFound(e.Message);
         }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
     }
 
     // PATCH: api/v1/scrumboard/column/74e353de-2938-4125-9d3c-80acff784644
@@ -127,7 +131,6 @@ public class ScrumBoardController : ControllerBase
 
         try
         {
-            // TODO: not working
             TaskPriority priority = ApiToDomainTaskPriority(request.Priority);
             Guid taskId = _boardService.CreateTask(id, request.Title, request.Description, priority);
             return Created(taskId.ToString(), null);
@@ -149,8 +152,31 @@ public class ScrumBoardController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult ChangeTask(string taskId, [FromBody] ChangeTaskRequest request)
     {
-        // TODO
-        return Ok();
+        Guid id;
+        if (!Guid.TryParse(taskId, out id))
+        {
+            return BadRequest("invalid guid");
+        }
+
+        try
+        {
+            TaskPriority? priority = null;
+            if (request.Priority is not null)
+            {
+                priority = ApiToDomainTaskPriority((int)request.Priority);
+            }
+
+            _boardService.ChangeTask(id, request.Title, request.Description, priority);
+            return Ok();
+        }
+        catch (TaskNotFoundException e)
+        {
+            return NotFound(e.Message);
+        }
+        catch (InvalidPriorityException e)
+        {
+            return BadRequest(e.Message);
+        }
     }
 
     // POST: api/v1/scrumboard/task/74e353de-2938-4125-9d3c-80acff784644
@@ -160,8 +186,25 @@ public class ScrumBoardController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult AdvanceTask(string taskId)
     {
-        // TODO
-        return Ok();
+        Guid id;
+        if (!Guid.TryParse(taskId, out id))
+        {
+            return BadRequest("invalid guid");
+        }
+
+        try
+        {
+            _boardService.AdvanceTask(id);
+            return Ok();
+        }
+        catch (TaskNotFoundException e)
+        {
+            return NotFound(e.Message);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
     }
 
     // DELETE: api/v1/scrumboard/task/74e353de-2938-4125-9d3c-80acff784644
@@ -171,8 +214,21 @@ public class ScrumBoardController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult RemoveTask(string taskId)
     {
-        // TODO
-        return Ok();
+        Guid id;
+        if (!Guid.TryParse(taskId, out id))
+        {
+            return BadRequest("invalid guid");
+        }
+
+        try
+        {
+            _boardService.RemoveTask(id);
+            return NoContent();
+        }
+        catch (TaskNotFoundException e)
+        {
+            return NotFound(e.Message);
+        }
     }
 
     private static TaskPriority ApiToDomainTaskPriority(int priority)

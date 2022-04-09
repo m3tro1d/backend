@@ -52,6 +52,19 @@ public class BoardStore : IBoardStore
         return board;
     }
 
+    public IBoard FindOneByTaskId(Guid taskId)
+    {
+        List<IBoard> boards = GetBoards();
+
+        IBoard? board = boards.Find(b => b.FindAllColumns().Any(c => c.FindAllTasks().Any(t => t.Id == taskId)));
+        if (board == null)
+        {
+            throw new TaskNotFoundException();
+        }
+
+        return board;
+    }
+
     public void Remove(Guid boardId)
     {
         List<IBoard> boards = GetBoards();
