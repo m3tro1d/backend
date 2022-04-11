@@ -1,4 +1,5 @@
-﻿using ScrumBoard.Exception;
+﻿using System;
+using ScrumBoard.Exception;
 using ScrumBoard.Factory;
 using ScrumBoard.Model;
 using Xunit;
@@ -77,7 +78,7 @@ public class ColumnTest
 
         column.AddTask(task);
 
-        Assert.Equal(task, column.FindTaskByTitle(task.Title));
+        Assert.Equal(task, column.FindTaskById(task.Id));
     }
 
     [Fact]
@@ -85,7 +86,7 @@ public class ColumnTest
     {
         IColumn column = MockColumn();
 
-        Assert.Null(column.FindTaskByTitle("whatever"));
+        Assert.Null(column.FindTaskById(Guid.NewGuid()));
     }
 
     [Fact]
@@ -95,7 +96,7 @@ public class ColumnTest
         ITask task = MockTask();
         column.AddTask(task);
 
-        column.RemoveTaskByTitle(task.Title);
+        column.RemoveTaskById(task.Id);
 
         Assert.Empty(column.FindAllTasks());
     }
@@ -107,7 +108,7 @@ public class ColumnTest
         ITask task = MockTask();
         column.AddTask(task);
 
-        column.RemoveTaskByTitle("whatever");
+        column.RemoveTaskById(Guid.NewGuid());
 
         Assert.Single(column.FindAllTasks());
     }

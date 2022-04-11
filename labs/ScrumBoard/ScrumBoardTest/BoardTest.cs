@@ -1,3 +1,4 @@
+using System;
 using ScrumBoard.Exception;
 using ScrumBoard.Factory;
 using ScrumBoard.Model;
@@ -77,7 +78,7 @@ public class BoardTest
 
         board.AddColumn(column);
 
-        Assert.Equal(column, board.FindColumnByTitle(column.Title));
+        Assert.Equal(column, board.FindColumnById(column.Id));
     }
 
     [Fact]
@@ -85,7 +86,7 @@ public class BoardTest
     {
         IBoard board = MockBoard();
 
-        Assert.Null(board.FindColumnByTitle("whatever"));
+        Assert.Null(board.FindColumnById(Guid.NewGuid()));
     }
 
     [Fact]
@@ -99,7 +100,7 @@ public class BoardTest
         ITask task = MockTask();
         board.AddTaskToColumn(task);
 
-        board.AdvanceTask(task.Title);
+        board.AdvanceTask(task.Id);
 
         Assert.Empty(column1.FindAllTasks());
         Assert.Collection(column2.FindAllTasks(),
@@ -116,7 +117,7 @@ public class BoardTest
             board.AddColumn(ScrumBoardFactory.CreateColumn(i.ToString()));
         }
 
-        Assert.Throws<TaskNotFoundException>(() => board.AdvanceTask("whatever"));
+        Assert.Throws<TaskNotFoundException>(() => board.AdvanceTask(Guid.NewGuid()));
     }
 
     [Fact]
@@ -127,7 +128,7 @@ public class BoardTest
         ITask task = MockTask();
         board.AddTaskToColumn(task);
 
-        Assert.Throws<FinalColumnReachedException>(() => board.AdvanceTask(task.Title));
+        Assert.Throws<FinalColumnReachedException>(() => board.AdvanceTask(task.Id));
     }
 
     [Fact]
@@ -135,7 +136,7 @@ public class BoardTest
     {
         IBoard board = MockBoard();
 
-        Assert.Throws<NoColumnsException>(() => board.AdvanceTask("whatever"));
+        Assert.Throws<NoColumnsException>(() => board.AdvanceTask(Guid.NewGuid()));
     }
 
     [Fact]
@@ -174,7 +175,7 @@ public class BoardTest
         board.AddColumn(column);
         ITask task = MockTask();
 
-        board.AddTaskToColumn(task, column.Title);
+        board.AddTaskToColumn(task, column.Id);
 
         Assert.Collection(column.FindAllTasks(),
                 columnTask => Assert.Equal(task, columnTask)
@@ -191,7 +192,7 @@ public class BoardTest
         }
         ITask task = MockTask();
 
-        Assert.Throws<ColumnNotFoundException>(() => board.AddTaskToColumn(task, "whatever"));
+        Assert.Throws<ColumnNotFoundException>(() => board.AddTaskToColumn(task, Guid.NewGuid()));
     }
 
     [Fact]
@@ -203,7 +204,7 @@ public class BoardTest
         ITask task = MockTask();
         column.AddTask(task);
 
-        board.RemoveTask(task.Title);
+        board.RemoveTask(task.Id);
 
         Assert.Empty(column.FindAllTasks());
     }
@@ -216,7 +217,7 @@ public class BoardTest
         ITask task = MockTask();
         column.AddTask(task);
 
-        board.RemoveTask("whatever");
+        board.RemoveTask(Guid.NewGuid());
 
         Assert.Collection(column.FindAllTasks(),
                 columnTask => Assert.Equal(task, columnTask)
@@ -231,7 +232,7 @@ public class BoardTest
         board.AddColumn(column);
         string newTitle = "Updated";
 
-        board.ChangeColumnTitle(column.Title, newTitle);
+        board.ChangeColumnTitle(column.Id, newTitle);
 
         Assert.Collection(board.FindAllColumns(),
                 column => Assert.Equal(newTitle, column.Title)
@@ -243,7 +244,7 @@ public class BoardTest
     {
         IBoard board = MockBoard();
 
-        Assert.Throws<ColumnNotFoundException>(() => board.ChangeColumnTitle("whatever", "Updated"));
+        Assert.Throws<ColumnNotFoundException>(() => board.ChangeColumnTitle(Guid.NewGuid(), "Updated"));
     }
 
     [Fact]
@@ -256,7 +257,7 @@ public class BoardTest
         column.AddTask(task);
         string newTitle = "Updated";
 
-        board.ChangeTaskTitle(task.Title, newTitle);
+        board.ChangeTaskTitle(task.Id, newTitle);
 
         Assert.Equal(newTitle, task.Title);
     }
@@ -270,7 +271,7 @@ public class BoardTest
         ITask task = MockTask();
         column.AddTask(task);
 
-        Assert.Throws<TaskNotFoundException>(() => board.ChangeTaskTitle("whatever", "Updated"));
+        Assert.Throws<TaskNotFoundException>(() => board.ChangeTaskTitle(Guid.NewGuid(), "Updated"));
     }
 
     [Fact]
@@ -283,7 +284,7 @@ public class BoardTest
         column.AddTask(task);
         string newDescription = "Updated";
 
-        board.ChangeTaskDescription(task.Title, newDescription);
+        board.ChangeTaskDescription(task.Id, newDescription);
 
         Assert.Equal(newDescription, task.Description);
     }
@@ -297,7 +298,7 @@ public class BoardTest
         ITask task = MockTask();
         column.AddTask(task);
 
-        Assert.Throws<TaskNotFoundException>(() => board.ChangeTaskDescription("whatever", "Updated"));
+        Assert.Throws<TaskNotFoundException>(() => board.ChangeTaskDescription(Guid.NewGuid(), "Updated"));
     }
 
     [Fact]
@@ -310,7 +311,7 @@ public class BoardTest
         column.AddTask(task);
         TaskPriority newPriority = TaskPriority.NONE;
 
-        board.ChangeTaskPriority(task.Title, newPriority);
+        board.ChangeTaskPriority(task.Id, newPriority);
 
         Assert.Equal(newPriority, task.Priority);
     }
@@ -324,7 +325,7 @@ public class BoardTest
         ITask task = MockTask();
         column.AddTask(task);
 
-        Assert.Throws<TaskNotFoundException>(() => board.ChangeTaskPriority("whatever", TaskPriority.NONE));
+        Assert.Throws<TaskNotFoundException>(() => board.ChangeTaskPriority(Guid.NewGuid(), TaskPriority.NONE));
     }
 
     private IBoard MockBoard()
