@@ -1,9 +1,7 @@
 ﻿namespace ScrumBoard.Model;
 
-public interface IBoard : IIdentifiable
+public interface IBoard : IIdentifiable, INameable
 {
-    public string Title { get; }
-
     public void AddColumn(IColumn column);
     public void ChangeColumnTitle(Guid columnId, string newTitle);
     public IReadOnlyCollection<IColumn> FindAllColumns();

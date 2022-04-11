@@ -1,7 +1,6 @@
-﻿namespace ScrumBoard.Model
+﻿namespace ScrumBoard.Model;
+
+public interface IIdentifiable
 {
-    public interface IIdentifiable
-    {
-        public Guid Id { get; }
-    }
+    public Guid Id { get; }
 }

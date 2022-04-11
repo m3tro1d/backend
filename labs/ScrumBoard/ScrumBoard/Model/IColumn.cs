@@ -1,9 +1,7 @@
 ﻿namespace ScrumBoard.Model;
 
-public interface IColumn : IIdentifiable
+public interface IColumn : IIdentifiable, IRenameable
 {
-    public string Title { get; set; }
-
     public void AddTask(ITask task);
     public IReadOnlyCollection<ITask> FindAllTasks();
     public ITask? FindTaskById(Guid taskId);
