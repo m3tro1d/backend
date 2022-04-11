@@ -1,13 +1,5 @@
 ﻿namespace ScrumBoard.Model;
 
-public enum TaskPriority
-{
-    HIGH,
-    MEDIUM,
-    LOW,
-    NONE,
-}
-
 public interface ITask
 {
     public Guid Id { get; }
