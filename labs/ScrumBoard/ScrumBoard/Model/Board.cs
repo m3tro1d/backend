@@ -4,6 +4,9 @@ namespace ScrumBoard.Model;
 
 internal class Board : IBoard
 {
+    private const int MAX_COLUMNS = 10;
+    private List<IColumn> _columns;
+
     public Guid Id { get; }
     public string Title { get; }
 
@@ -160,7 +163,4 @@ internal class Board : IBoard
 
         throw new TaskNotFoundException();
     }
-
-    private const int MAX_COLUMNS = 10;
-    private List<IColumn> _columns;
 }

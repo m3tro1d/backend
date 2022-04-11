@@ -4,6 +4,8 @@ namespace ScrumBoard.Model;
 
 internal class Column : IColumn
 {
+    private List<ITask> _tasks;
+
     public Guid Id { get; }
     public string Title { get; set; }
 
@@ -38,6 +40,4 @@ internal class Column : IColumn
     {
         _tasks.RemoveAll(task => task.Id == taskId);
     }
-
-    private List<ITask> _tasks;
 }
