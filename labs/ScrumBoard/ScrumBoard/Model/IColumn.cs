@@ -1,8 +1,7 @@
 ﻿namespace ScrumBoard.Model;
 
-public interface IColumn
+public interface IColumn : IIdentifiable
 {
-    public Guid Id { get; }
     public string Title { get; set; }
 
     public void AddTask(ITask task);

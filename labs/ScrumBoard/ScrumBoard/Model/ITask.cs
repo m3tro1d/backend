@@ -1,6 +1,6 @@
 ﻿namespace ScrumBoard.Model;
 
-public interface ITask
+public interface ITask : IIdentifiable
 {
     public Guid Id { get; }
     public string Title { get; set; }
