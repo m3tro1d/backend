@@ -85,7 +85,7 @@
                 throw new DivideByZeroException("zero division");
             }
 
-            return operation switch
+            double result = operation switch
             {
                 Operation.ADDITION => operand1 + operand2,
                 Operation.SUBTRACTION => operand1 - operand2,
@@ -93,6 +93,13 @@
                 Operation.DIVISION => operand1 / operand2,
                 _ => throw new NotImplementedException("operation not implemented"),
             };
+
+            if (double.IsInfinity(result))
+            {
+                throw new OverflowException("overflow while calculating the result");
+            }
+
+            return result;
         }
 
         private static void PrintResult(double operand1, double operand2, Operation operation, double result)
