@@ -38,7 +38,7 @@ public class BoardQueryService : IBoardQueryService
                 List<TaskData> tasks = new();
                 foreach (ITask task in column.FindAllTasks())
                 {
-                    tasks.Add(new TaskData(task.Id.ToString(), task.Title, task.Description, PriorityToString(task.Priority)));
+                    tasks.Add(new TaskData(task.Id.ToString(), task.Title, task.Description, task.Priority.ToString()));
                 }
 
                 columns.Add(new ColumnData(column.Id.ToString(), column.Title, tasks));
@@ -48,22 +48,5 @@ public class BoardQueryService : IBoardQueryService
         }
 
         return result;
-    }
-
-    private string PriorityToString(TaskPriority priority)
-    {
-        switch (priority)
-        {
-            case TaskPriority.HIGH:
-                return "HIGH";
-            case TaskPriority.MEDIUM:
-                return "MEDIUM";
-            case TaskPriority.LOW:
-                return "LOW";
-            case TaskPriority.NONE:
-                return "NONE";
-            default:
-                return "";
-        }
     }
 }

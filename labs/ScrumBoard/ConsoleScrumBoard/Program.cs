@@ -88,23 +88,6 @@ class Program
 
     private static void PrintTask(ITask task)
     {
-        Console.WriteLine($"  [{TaskPriorityToString(task.Priority)}] {task.Title}: {task.Description}");
-    }
-
-    private static string TaskPriorityToString(TaskPriority priority)
-    {
-        switch (priority)
-        {
-            case TaskPriority.HIGH:
-                return "HIGH";
-            case TaskPriority.MEDIUM:
-                return "MEDIUM";
-            case TaskPriority.LOW:
-                return "LOW";
-            case TaskPriority.NONE:
-                return "NONE";
-            default:
-                return "";
-        }
+        Console.WriteLine($"  [{task.Priority}] {task.Title}: {task.Description}");
     }
 }
