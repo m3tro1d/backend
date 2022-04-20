@@ -25,10 +25,10 @@ public class ScrumBoardController : ControllerBase
     // GET api/v1/scrumboard/board
     [HttpGet("board")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ListBoardsResponse ListBoards()
+    public GetBoardsResponse GetBoards()
     {
         IEnumerable<BoardData> boards = _boardQueryService.ListBoards();
-        return new ListBoardsResponse(boards);
+        return new GetBoardsResponse(boards);
     }
 
     // POST: api/v1/scrumboard/board

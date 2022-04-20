@@ -2,11 +2,11 @@
 
 namespace WebScrumBoard.Controllers.Response;
 
-public class ListBoardsResponse
+public class GetBoardsResponse
 {
     public IEnumerable<BoardData> Boards { get; }
 
-    public ListBoardsResponse(IEnumerable<BoardData> boards)
+    public GetBoardsResponse(IEnumerable<BoardData> boards)
     {
         Boards = boards;
     }
