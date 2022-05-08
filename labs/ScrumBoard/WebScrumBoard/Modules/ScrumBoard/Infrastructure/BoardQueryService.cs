@@ -1,8 +1,9 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using ScrumBoard.Model;
+using WebScrumBoard.Modules.ScrumBoard.App.Query;
 using WebScrumBoard.Modules.ScrumBoard.App.Query.Data;
 
-namespace WebScrumBoard.Modules.ScrumBoard.App.Query;
+namespace WebScrumBoard.Modules.ScrumBoard.Infrastructure;
 
 public class BoardQueryService : IBoardQueryService
 {
