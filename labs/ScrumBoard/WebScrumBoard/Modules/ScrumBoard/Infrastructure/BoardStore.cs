@@ -18,33 +18,31 @@ public class BoardStore : IBoardStore
 
     public void Store(IBoard board)
     {
-        Entity.Board? boardEntity = _context.Boards.Include(b => b.Columns)
+        Entity.Board? boardEntity = _context.Boards
+            .Include(b => b.Columns)
             .ThenInclude(c => c.Tasks)
             .FirstOrDefault(b => b.Id == board.Id);
 
-        if (boardEntity is null)
+        if (boardEntity is not null)
         {
-            boardEntity = new();
-
-            boardEntity.Id = board.Id;
-            boardEntity.Title = board.Title;
-            boardEntity.Columns = ConvertColumnsToEntities(board.FindAllColumns());
-
-            _context.Boards.Add(boardEntity);
-        }
-        else
-        {
-            boardEntity.Columns = ConvertColumnsToEntities(board.FindAllColumns());
-
-            _context.Boards.Update(boardEntity);
+            _context.Boards.Remove(boardEntity);
+            _context.SaveChanges();
         }
 
+        boardEntity = new();
+
+        boardEntity.Id = board.Id;
+        boardEntity.Title = board.Title;
+        boardEntity.Columns = ConvertColumnsToEntities(board.FindAllColumns());
+
+        _context.Boards.Add(boardEntity);
         _context.SaveChanges();
     }
 
     public IBoard FindOne(Guid boardId)
     {
-        Entity.Board? board = _context.Boards.Include(b => b.Columns)
+        Entity.Board? board = _context.Boards
+            .Include(b => b.Columns)
             .ThenInclude(c => c.Tasks)
             .FirstOrDefault(b => b.Id == boardId);
 
@@ -58,7 +56,8 @@ public class BoardStore : IBoardStore
 
     public IBoard FindOneByColumnId(Guid columnId)
     {
-        Entity.Board? board = _context.Boards.Include(b => b.Columns)
+        Entity.Board? board = _context.Boards
+            .Include(b => b.Columns)
             .ThenInclude(c => c.Tasks)
             .FirstOrDefault(b => b.Columns.Any(c => c.Id == columnId));
 
@@ -72,7 +71,8 @@ public class BoardStore : IBoardStore
 
     public IBoard FindOneByTaskId(Guid taskId)
     {
-        Entity.Board? board = _context.Boards.Include(b => b.Columns)
+        Entity.Board? board = _context.Boards
+            .Include(b => b.Columns)
             .ThenInclude(c => c.Tasks)
             .FirstOrDefault(b => b.Columns.Any(c => c.Tasks.Any(t => t.Id == taskId)));
 

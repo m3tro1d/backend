@@ -40,7 +40,7 @@ namespace WebScrumBoard.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid?>("BoardId")
+                    b.Property<Guid>("BoardId")
                         .HasColumnType("char(36)");
 
                     b.Property<string>("Title")
@@ -51,7 +51,7 @@ namespace WebScrumBoard.Migrations
 
                     b.HasIndex("BoardId");
 
-                    b.ToTable("Column");
+                    b.ToTable("Columns");
                 });
 
             modelBuilder.Entity("WebScrumBoard.Modules.ScrumBoard.Infrastructure.Entity.Task", b =>
@@ -60,7 +60,7 @@ namespace WebScrumBoard.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid?>("ColumnId")
+                    b.Property<Guid>("ColumnId")
                         .HasColumnType("char(36)");
 
                     b.Property<string>("Description")
@@ -78,21 +78,29 @@ namespace WebScrumBoard.Migrations
 
                     b.HasIndex("ColumnId");
 
-                    b.ToTable("Task");
+                    b.ToTable("Tasks");
                 });
 
             modelBuilder.Entity("WebScrumBoard.Modules.ScrumBoard.Infrastructure.Entity.Column", b =>
                 {
-                    b.HasOne("WebScrumBoard.Modules.ScrumBoard.Infrastructure.Entity.Board", null)
+                    b.HasOne("WebScrumBoard.Modules.ScrumBoard.Infrastructure.Entity.Board", "Board")
                         .WithMany("Columns")
-                        .HasForeignKey("BoardId");
+                        .HasForeignKey("BoardId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Board");
                 });
 
             modelBuilder.Entity("WebScrumBoard.Modules.ScrumBoard.Infrastructure.Entity.Task", b =>
                 {
-                    b.HasOne("WebScrumBoard.Modules.ScrumBoard.Infrastructure.Entity.Column", null)
+                    b.HasOne("WebScrumBoard.Modules.ScrumBoard.Infrastructure.Entity.Column", "Column")
                         .WithMany("Tasks")
-                        .HasForeignKey("ColumnId");
+                        .HasForeignKey("ColumnId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Column");
                 });
 
             modelBuilder.Entity("WebScrumBoard.Modules.ScrumBoard.Infrastructure.Entity.Board", b =>

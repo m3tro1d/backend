@@ -8,5 +8,7 @@ public class Column
     public Guid Id { get; set; }
 
     public string Title { get; set; }
-    public List<Task> Tasks { get; set; } = new();
+    public virtual ICollection<Task> Tasks { get; set; }
+
+    public virtual Board Board { get; set; }
 }

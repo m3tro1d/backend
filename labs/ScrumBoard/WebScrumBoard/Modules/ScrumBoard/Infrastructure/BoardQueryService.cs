@@ -1,4 +1,5 @@
-﻿using WebScrumBoard.Modules.ScrumBoard.App.Query;
+﻿using Microsoft.EntityFrameworkCore;
+using WebScrumBoard.Modules.ScrumBoard.App.Query;
 using WebScrumBoard.Modules.ScrumBoard.App.Query.Data;
 using WebScrumBoard.Modules.ScrumBoard.Infrastructure.Config;
 using WebScrumBoard.Modules.ScrumBoard.Infrastructure.Entity;
@@ -17,7 +18,12 @@ public class BoardQueryService : IBoardQueryService
 
     public IEnumerable<BoardData> ListBoards()
     {
-        return HydrateBoards(_context.Boards.ToList());
+        List<Board> boards = _context.Boards
+            .Include(b => b.Columns)
+            .ThenInclude(c => c.Tasks)
+            .ToList();
+
+        return HydrateBoards(boards);
     }
 
     private IEnumerable<BoardData> HydrateBoards(List<Board> boards)

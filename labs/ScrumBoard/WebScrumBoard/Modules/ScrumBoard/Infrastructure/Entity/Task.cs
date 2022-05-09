@@ -10,4 +10,6 @@ public class Task
     public string Title { get; set; }
     public string Description { get; set; }
     public int Priority { get; set; }
+
+    public virtual Column Column { get; set; }
 }

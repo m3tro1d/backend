@@ -1,10 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace WebScrumBoard.Migrations
 {
-    public partial class Initial : Migration
+    public partial class CreateBoard : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -26,27 +27,28 @@ namespace WebScrumBoard.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Column",
+                name: "Columns",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     Title = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    BoardId = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci")
+                    BoardId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Column", x => x.Id);
+                    table.PrimaryKey("PK_Columns", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Column_Boards_BoardId",
+                        name: "FK_Columns_Boards_BoardId",
                         column: x => x.BoardId,
                         principalTable: "Boards",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Task",
+                name: "Tasks",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
@@ -55,37 +57,38 @@ namespace WebScrumBoard.Migrations
                     Description = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Priority = table.Column<int>(type: "int", nullable: false),
-                    ColumnId = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci")
+                    ColumnId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Task", x => x.Id);
+                    table.PrimaryKey("PK_Tasks", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Task_Column_ColumnId",
+                        name: "FK_Tasks_Columns_ColumnId",
                         column: x => x.ColumnId,
-                        principalTable: "Column",
-                        principalColumn: "Id");
+                        principalTable: "Columns",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Column_BoardId",
-                table: "Column",
+                name: "IX_Columns_BoardId",
+                table: "Columns",
                 column: "BoardId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Task_ColumnId",
-                table: "Task",
+                name: "IX_Tasks_ColumnId",
+                table: "Tasks",
                 column: "ColumnId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Task");
+                name: "Tasks");
 
             migrationBuilder.DropTable(
-                name: "Column");
+                name: "Columns");
 
             migrationBuilder.DropTable(
                 name: "Boards");
