@@ -1,43 +1,35 @@
-﻿using Microsoft.Extensions.Caching.Memory;
-using ScrumBoard.Model;
-using WebScrumBoard.Modules.ScrumBoard.App.Query;
+﻿using WebScrumBoard.Modules.ScrumBoard.App.Query;
 using WebScrumBoard.Modules.ScrumBoard.App.Query.Data;
+using WebScrumBoard.Modules.ScrumBoard.Infrastructure.Config;
+using WebScrumBoard.Modules.ScrumBoard.Infrastructure.Entity;
+using Task = WebScrumBoard.Modules.ScrumBoard.Infrastructure.Entity.Task;
 
 namespace WebScrumBoard.Modules.ScrumBoard.Infrastructure;
 
 public class BoardQueryService : IBoardQueryService
 {
-    private const string MEMORY_CACHE_KEY = "boards";
+    private readonly ScrumBoardDbContext _context;
 
-    private IMemoryCache _memoryCache;
-
-    public BoardQueryService(IMemoryCache memoryCache)
+    public BoardQueryService(ScrumBoardDbContext context)
     {
-        _memoryCache = memoryCache;
+        _context = context;
     }
 
     public IEnumerable<BoardData> ListBoards()
     {
-        List<IBoard> boards = new();
-        _memoryCache.TryGetValue(MEMORY_CACHE_KEY, out boards);
-        if (boards == null)
-        {
-            boards = new();
-        }
-
-        return HydrateBoards(boards);
+        return HydrateBoards(_context.Boards.ToList());
     }
 
-    private IEnumerable<BoardData> HydrateBoards(IEnumerable<IBoard> boards)
+    private IEnumerable<BoardData> HydrateBoards(List<Board> boards)
     {
         List<BoardData> result = new();
-        foreach (IBoard board in boards)
+        foreach (Board board in boards)
         {
             List<ColumnData> columns = new();
-            foreach (IColumn column in board.FindAllColumns())
+            foreach (Column column in board.Columns)
             {
                 List<TaskData> tasks = new();
-                foreach (ITask task in column.FindAllTasks())
+                foreach (Task task in column.Tasks)
                 {
                     tasks.Add(new TaskData(task.Id.ToString(), task.Title, task.Description, task.Priority.ToString()));
                 }
