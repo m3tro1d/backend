@@ -17,6 +17,13 @@ internal class Board : IBoard
         _columns = new();
     }
 
+    public Board(Guid id, string title, List<IColumn> columns)
+    {
+        Id = id;
+        Title = title;
+        _columns = columns;
+    }
+
     public void AddColumn(IColumn column)
     {
         if (_columns.Count == MAX_COLUMNS)

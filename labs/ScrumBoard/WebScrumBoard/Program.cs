@@ -24,7 +24,6 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-builder.Services.AddMemoryCache();
 builder.Services.AddDbContext<ScrumBoardDbContext>(
     options => options.UseMySql(
         builder.Configuration.GetConnectionString("Default"),

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Caching.Memory;
+﻿using Microsoft.EntityFrameworkCore;
+using ScrumBoard.Factory;
 using ScrumBoard.Model;
 using WebScrumBoard.Modules.ScrumBoard.App;
 using WebScrumBoard.Modules.ScrumBoard.App.Exception;
@@ -8,36 +9,32 @@ namespace WebScrumBoard.Modules.ScrumBoard.Infrastructure;
 
 public class BoardStore : IBoardStore
 {
-    private const string MEMORY_CACHE_KEY = "boards";
-
-    private IMemoryCache _memoryCache;
     private readonly ScrumBoardDbContext _context;
 
-    public BoardStore(IMemoryCache memoryCache, ScrumBoardDbContext context)
+    public BoardStore(ScrumBoardDbContext context)
     {
-        _memoryCache = memoryCache;
         _context = context;
     }
 
     public void Store(IBoard board)
     {
-        Entity.Board? boardEntity = _context.Boards.Find(board.Id);
+        Entity.Board? boardEntity = _context.Boards.Include(b => b.Columns)
+            .ThenInclude(c => c.Tasks)
+            .FirstOrDefault(b => b.Id == board.Id);
+
         if (boardEntity is null)
         {
             boardEntity = new();
 
             boardEntity.Id = board.Id;
             boardEntity.Title = board.Title;
-
-            List<Entity.Column> columns = new();
-            boardEntity.Columns = columns;
+            boardEntity.Columns = ConvertColumnsToEntities(board.FindAllColumns());
 
             _context.Boards.Add(boardEntity);
         }
         else
         {
-            List<Entity.Column> columns = new();
-            boardEntity.Columns = columns;
+            boardEntity.Columns = ConvertColumnsToEntities(board.FindAllColumns());
 
             _context.Boards.Update(boardEntity);
         }
@@ -47,62 +44,100 @@ public class BoardStore : IBoardStore
 
     public IBoard FindOne(Guid boardId)
     {
-        List<IBoard> boards = GetBoards();
+        Entity.Board? board = _context.Boards.Include(b => b.Columns)
+            .ThenInclude(c => c.Tasks)
+            .FirstOrDefault(b => b.Id == boardId);
 
-        IBoard? board = boards.Find(b => b.Id == boardId);
-        if (board == null)
+        if (board is null)
         {
             throw new BoardNotFoundException();
         }
 
-        return board;
+        return ConvertEntityToBoard(board);
     }
 
     public IBoard FindOneByColumnId(Guid columnId)
     {
-        List<IBoard> boards = GetBoards();
+        Entity.Board? board = _context.Boards.Include(b => b.Columns)
+            .ThenInclude(c => c.Tasks)
+            .FirstOrDefault(b => b.Columns.Any(c => c.Id == columnId));
 
-        IBoard? board = boards.Find(b => b.FindAllColumns().Any(c => c.Id == columnId));
-        if (board == null)
+        if (board is null)
         {
             throw new ColumnNotFoundException();
         }
 
-        return board;
+        return ConvertEntityToBoard(board);
     }
 
     public IBoard FindOneByTaskId(Guid taskId)
     {
-        List<IBoard> boards = GetBoards();
+        Entity.Board? board = _context.Boards.Include(b => b.Columns)
+            .ThenInclude(c => c.Tasks)
+            .FirstOrDefault(b => b.Columns.Any(c => c.Tasks.Any(t => t.Id == taskId)));
 
-        IBoard? board = boards.Find(b => b.FindAllColumns().Any(c => c.FindAllTasks().Any(t => t.Id == taskId)));
-        if (board == null)
+        if (board is null)
         {
             throw new TaskNotFoundException();
         }
 
-        return board;
+        return ConvertEntityToBoard(board);
     }
 
     public void Remove(Guid boardId)
     {
-        List<IBoard> boards = GetBoards();
-
-        boards.RemoveAll(board => board.Id == boardId);
-
-        _memoryCache.Set(MEMORY_CACHE_KEY, boards);
-    }
-
-    private List<IBoard> GetBoards()
-    {
-        List<IBoard> boards;
-        _memoryCache.TryGetValue(MEMORY_CACHE_KEY, out boards);
-        if (boards == null)
+        Entity.Board? board = _context.Boards.Find(boardId);
+        if (board is null)
         {
-            boards = new();
+            return;
         }
 
-        return boards;
+        _context.Boards.Remove(board);
+        _context.SaveChanges();
     }
 
+    private List<Entity.Column> ConvertColumnsToEntities(IReadOnlyCollection<IColumn> columns)
+    {
+        List<Entity.Column> result = new();
+        foreach (IColumn column in columns)
+        {
+            List<Entity.Task> tasks = new();
+            foreach (ITask task in column.FindAllTasks())
+            {
+                Entity.Task taskEntity = new();
+                taskEntity.Id = task.Id;
+                taskEntity.Title = task.Title;
+                taskEntity.Description = task.Description;
+                taskEntity.Priority = (int)task.Priority;
+
+                tasks.Add(taskEntity);
+            }
+
+            Entity.Column columnEntity = new();
+            columnEntity.Id = column.Id;
+            columnEntity.Title = column.Title;
+            columnEntity.Tasks = tasks;
+
+            result.Add(columnEntity);
+        }
+
+        return result;
+    }
+
+    private IBoard ConvertEntityToBoard(Entity.Board board)
+    {
+        List<IColumn> columns = new();
+        foreach (Entity.Column column in board.Columns)
+        {
+            List<ITask> tasks = new();
+            foreach (Entity.Task task in column.Tasks)
+            {
+                tasks.Add(ScrumBoardFactory.LoadTask(task.Id, task.Title, task.Description, (TaskPriority)task.Priority));
+            }
+
+            columns.Add(ScrumBoardFactory.LoadColumn(column.Id, column.Title, tasks));
+        }
+
+        return ScrumBoardFactory.LoadBoard(board.Id, board.Title, columns);
+    }
 }

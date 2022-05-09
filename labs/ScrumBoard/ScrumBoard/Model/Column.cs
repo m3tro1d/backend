@@ -16,6 +16,13 @@ internal class Column : IColumn
         _tasks = new();
     }
 
+    public Column(Guid id, string title, List<ITask> tasks)
+    {
+        Id = id;
+        Title = title;
+        _tasks = tasks;
+    }
+
     public void AddTask(ITask task)
     {
         if (FindTaskById(task.Id) != null)
