@@ -2,6 +2,7 @@
 using ScrumBoard.Model;
 using WebScrumBoard.Modules.ScrumBoard.App;
 using WebScrumBoard.Modules.ScrumBoard.App.Exception;
+using WebScrumBoard.Modules.ScrumBoard.Infrastructure.Config;
 
 namespace WebScrumBoard.Modules.ScrumBoard.Infrastructure;
 
@@ -10,20 +11,38 @@ public class BoardStore : IBoardStore
     private const string MEMORY_CACHE_KEY = "boards";
 
     private IMemoryCache _memoryCache;
+    private readonly ScrumBoardDbContext _context;
 
-    public BoardStore(IMemoryCache memoryCache)
+    public BoardStore(IMemoryCache memoryCache, ScrumBoardDbContext context)
     {
         _memoryCache = memoryCache;
+        _context = context;
     }
 
     public void Store(IBoard board)
     {
-        List<IBoard> boards = GetBoards();
+        Entity.Board? boardEntity = _context.Boards.Find(board.Id);
+        if (boardEntity is null)
+        {
+            boardEntity = new();
 
-        boards.RemoveAll(existingBoard => existingBoard.Id == board.Id);
-        boards.Add(board);
+            boardEntity.Id = board.Id;
+            boardEntity.Title = board.Title;
 
-        _memoryCache.Set(MEMORY_CACHE_KEY, boards);
+            List<Entity.Column> columns = new();
+            boardEntity.Columns = columns;
+
+            _context.Boards.Add(boardEntity);
+        }
+        else
+        {
+            List<Entity.Column> columns = new();
+            boardEntity.Columns = columns;
+
+            _context.Boards.Update(boardEntity);
+        }
+
+        _context.SaveChanges();
     }
 
     public IBoard FindOne(Guid boardId)
