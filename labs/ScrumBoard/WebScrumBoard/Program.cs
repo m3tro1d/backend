@@ -1,7 +1,9 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using WebScrumBoard.Modules.ScrumBoard.App;
 using WebScrumBoard.Modules.ScrumBoard.App.Query;
 using WebScrumBoard.Modules.ScrumBoard.Infrastructure;
+using WebScrumBoard.Modules.ScrumBoard.Infrastructure.Config;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,7 +23,13 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 });
+
 builder.Services.AddMemoryCache();
+builder.Services.AddDbContext<ScrumBoardDbContext>(
+    options => options.UseMySql(
+        builder.Configuration.GetConnectionString("Default"),
+        ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("Default"))
+        ));
 
 builder.Services.AddScoped<IBoardService, BoardService>();
 builder.Services.AddScoped<IBoardQueryService, BoardQueryService>();
